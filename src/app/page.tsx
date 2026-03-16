@@ -29,6 +29,8 @@ export default function Home() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const stored = sessionStorage.getItem("tachyon_token");
@@ -39,26 +41,77 @@ export default function Home() {
     }
   }, []);
 
-  async function startLogin() {
+  async function startLogin(e: React.FormEvent) {
+    e.preventDefault();
     setError(null);
-    const verifier = generateCodeVerifier();
-    const challenge = await generateCodeChallenge(verifier);
-    const state = generateState();
+    setLoading(true);
 
-    sessionStorage.setItem("pkce_verifier", verifier);
-    sessionStorage.setItem("oauth_state", state);
+    try {
+      const verifier = generateCodeVerifier();
+      const challenge = await generateCodeChallenge(verifier);
+      const state = generateState();
 
-    const params = new URLSearchParams({
-      response_type: "code",
-      client_id: config.clientId,
-      redirect_uri: config.redirectUri,
-      scope: config.scopes,
-      state,
-      code_challenge: challenge,
-      code_challenge_method: "S256",
-    });
+      sessionStorage.setItem("pkce_verifier", verifier);
 
-    window.location.href = `${config.tachyonAuthUrl}/oauth2/authorize?${params}`;
+      // Step 1: Sign in to Tachyon to get a session token
+      const signInRes = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!signInRes.ok) {
+        const text = await signInRes.text();
+        throw new Error(`Sign in failed: ${text}`);
+      }
+
+      const { sessionToken } = await signInRes.json();
+
+      // Step 2: Request authorization code via POST
+      const authorizeRes = await fetch("/api/auth/authorize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionToken,
+          code_challenge: challenge,
+          code_challenge_method: "S256",
+          state,
+        }),
+      });
+
+      if (!authorizeRes.ok) {
+        const text = await authorizeRes.text();
+        throw new Error(`Authorization failed: ${text}`);
+      }
+
+      const { authorization_code } = await authorizeRes.json();
+
+      // Step 3: Exchange code for tokens
+      const tokenRes = await fetch("/api/auth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: authorization_code,
+          code_verifier: verifier,
+        }),
+      });
+
+      if (!tokenRes.ok) {
+        const text = await tokenRes.text();
+        throw new Error(`Token exchange failed: ${text}`);
+      }
+
+      const tokenData = await tokenRes.json();
+      sessionStorage.setItem("tachyon_token", JSON.stringify(tokenData));
+      setToken(tokenData);
+      fetchUserInfo(tokenData.access_token);
+      setUsername("");
+      setPassword("");
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function fetchUserInfo(accessToken: string) {
@@ -93,7 +146,6 @@ export default function Home() {
     }
     sessionStorage.removeItem("tachyon_token");
     sessionStorage.removeItem("pkce_verifier");
-    sessionStorage.removeItem("oauth_state");
     setToken(null);
     setUserInfo(null);
   }
@@ -122,6 +174,7 @@ export default function Home() {
             padding: 16,
             marginBottom: 24,
             color: "#f87171",
+            wordBreak: "break-all",
           }}
         >
           {error}
@@ -129,29 +182,101 @@ export default function Home() {
       )}
 
       {!token ? (
-        <div>
-          <button
-            onClick={startLogin}
-            disabled={loading || !config.clientId}
+        <form onSubmit={startLogin}>
+          <div
             style={{
-              background: "#2563eb",
-              color: "white",
-              border: "none",
+              background: "#1a1a2e",
+              border: "1px solid #2d2d5a",
               borderRadius: 8,
-              padding: "12px 24px",
-              fontSize: 16,
-              cursor: "pointer",
-              opacity: loading || !config.clientId ? 0.5 : 1,
+              padding: 24,
+              marginBottom: 24,
             }}
           >
-            {loading ? "Redirecting..." : "Sign in with Tachyon"}
-          </button>
+            <h2 style={{ fontSize: 18, marginTop: 0, marginBottom: 16 }}>
+              Sign in with Tachyon
+            </h2>
+            <div style={{ marginBottom: 16 }}>
+              <label
+                style={{
+                  display: "block",
+                  color: "#888",
+                  fontSize: 14,
+                  marginBottom: 4,
+                }}
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your Tachyon username"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  background: "#0a0a1a",
+                  border: "1px solid #333",
+                  borderRadius: 6,
+                  color: "#ededed",
+                  fontSize: 14,
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label
+                style={{
+                  display: "block",
+                  color: "#888",
+                  fontSize: 14,
+                  marginBottom: 4,
+                }}
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  background: "#0a0a1a",
+                  border: "1px solid #333",
+                  borderRadius: 6,
+                  color: "#ededed",
+                  fontSize: 14,
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading || !config.clientId}
+              style={{
+                width: "100%",
+                background: "#2563eb",
+                color: "white",
+                border: "none",
+                borderRadius: 8,
+                padding: "12px 24px",
+                fontSize: 16,
+                cursor: "pointer",
+                opacity: loading || !config.clientId ? 0.5 : 1,
+              }}
+            >
+              {loading ? "Authenticating..." : "Sign in"}
+            </button>
+          </div>
           {!config.clientId && (
-            <p style={{ color: "#888", fontSize: 14, marginTop: 12 }}>
+            <p style={{ color: "#888", fontSize: 14 }}>
               Set NEXT_PUBLIC_OAUTH2_CLIENT_ID in .env to enable login
             </p>
           )}
-        </div>
+        </form>
       ) : (
         <div>
           <div
