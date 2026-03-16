@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { config } from "@/lib/config";
 
+export const runtime = "edge";
+
 export async function POST(request: NextRequest) {
   const { code, code_verifier } = await request.json();
 
