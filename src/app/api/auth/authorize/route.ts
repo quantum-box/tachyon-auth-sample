@@ -17,8 +17,7 @@ export async function POST(request: NextRequest) {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${sessionToken}`,
-      "x-operator-id": "tn_01hjjn348rn3t49zz6hvmfq67p",
-      "x-user-id": "us_01hs2yepy5hw4rz8pdq2wywnwt",
+      "x-operator-id": config.operatorId,
     },
     body: JSON.stringify({
       client_id: config.clientId,

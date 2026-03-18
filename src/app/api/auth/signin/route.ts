@@ -6,39 +6,26 @@ export const runtime = "edge";
 export async function POST(request: NextRequest) {
   const { username, password } = await request.json();
 
-  // Authenticate against Tachyon platform using GraphQL
-  // SignInWithPlatform mutation
-  const graphqlRes = await fetch(`${config.tachyonAuthUrl}/v1/graphql`, {
+  // Call Tachyon's password login endpoint
+  const res = await fetch(`${config.tachyonAuthUrl}/oauth2/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-operator-id": "tn_01hjjn348rn3t49zz6hvmfq67p",
     },
-    body: JSON.stringify({
-      query: `mutation SignInWithPlatform($platformId: String!, $accessToken: String!) {
-        signInWithPlatform(platformId: $platformId, accessToken: $accessToken) {
-          id
-          email
-        }
-      }`,
-      variables: {
-        platformId: "tn_01hjjn348rn3t49zz6hvmfq67p",
-        accessToken: "dummy-token",
-      },
-    }),
+    body: JSON.stringify({ username, password }),
   });
 
-  if (!graphqlRes.ok) {
+  if (!res.ok) {
+    const text = await res.text();
     return NextResponse.json(
-      { error: "Authentication failed" },
-      { status: 401 }
+      { error: "authentication_failed", detail: text },
+      { status: res.status }
     );
   }
 
-  // For demo purposes, return a session token
-  // In production, this would be a real JWT from Tachyon
+  const data = await res.json();
   return NextResponse.json({
-    sessionToken: "dummy-token",
-    userId: "us_01hs2yepy5hw4rz8pdq2wywnwt",
+    sessionToken: data.session_token,
+    userId: data.user_id,
   });
 }
