@@ -6,19 +6,18 @@ export const runtime = "edge";
 export async function POST(request: NextRequest) {
   const { code, code_verifier } = await request.json();
 
-  const body = new URLSearchParams({
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: config.redirectUri,
-    client_id: config.clientId,
-    client_secret: config.clientSecret,
-    code_verifier,
-  });
-
+  // Call Tachyon's OAuth2 token endpoint with JSON
   const res = await fetch(`${config.tachyonAuthUrl}/oauth2/token`, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body.toString(),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: config.redirectUri,
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+      code_verifier,
+    }),
   });
 
   if (!res.ok) {
