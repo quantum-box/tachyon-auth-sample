@@ -33,11 +33,10 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const TEST_USER = { username: "test", password: "***REDACTED***" };
+  const DEMO_USER = { username: "demo" };
 
-  function fillTestUser() {
-    setUsername(TEST_USER.username);
-    setPassword(TEST_USER.password);
+  function fillDemoUser() {
+    setUsername(DEMO_USER.username);
   }
 
   useEffect(() => {
@@ -318,11 +317,11 @@ export default function Home() {
               }}
             >
               <h3 style={{ fontSize: 14, margin: 0, color: "#888" }}>
-                Test Credentials
+                Demo Account
               </h3>
               <button
                 type="button"
-                onClick={fillTestUser}
+                onClick={fillDemoUser}
                 style={{
                   background: "#334155",
                   color: "#e2e8f0",
@@ -358,31 +357,7 @@ export default function Home() {
                         borderRadius: 4,
                       }}
                     >
-                      {TEST_USER.username}
-                    </code>
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    style={{
-                      padding: "4px 12px 4px 0",
-                      color: "#888",
-                      fontSize: 13,
-                    }}
-                  >
-                    Password
-                  </td>
-                  <td>
-                    <code
-                      style={{
-                        color: "#e2e8f0",
-                        fontSize: 13,
-                        background: "#0a0a1a",
-                        padding: "2px 6px",
-                        borderRadius: 4,
-                      }}
-                    >
-                      {TEST_USER.password}
+                      {DEMO_USER.username}
                     </code>
                   </td>
                 </tr>
