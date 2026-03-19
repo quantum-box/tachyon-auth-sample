@@ -31,6 +31,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const TEST_USER = { username: "test", password: "hmw2atd@HCF3qwu*rcn" };
+
+  function fillTestUser() {
+    setUsername(TEST_USER.username);
+    setPassword(TEST_USER.password);
+  }
 
   useEffect(() => {
     const stored = sessionStorage.getItem("tachyon_token");
@@ -235,23 +243,45 @@ export default function Home() {
               >
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  background: "#0a0a1a",
-                  border: "1px solid #333",
-                  borderRadius: 6,
-                  color: "#ededed",
-                  fontSize: 14,
-                  boxSizing: "border-box",
-                }}
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "10px 40px 10px 12px",
+                    background: "#0a0a1a",
+                    border: "1px solid #333",
+                    borderRadius: 6,
+                    color: "#ededed",
+                    fontSize: 14,
+                    boxSizing: "border-box",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "#888",
+                    cursor: "pointer",
+                    padding: 4,
+                    fontSize: 14,
+                    lineHeight: 1,
+                  }}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "\u{1F441}" : "\u{1F441}\u{200D}\u{1F5E8}"}
+                </button>
+              </div>
             </div>
             <button
               type="submit"
@@ -270,6 +300,94 @@ export default function Home() {
             >
               {loading ? "Authenticating..." : "Sign in"}
             </button>
+          </div>
+          <div
+            style={{
+              background: "#1a1a2e",
+              border: "1px solid #2d2d5a",
+              borderRadius: 8,
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              <h3 style={{ fontSize: 14, margin: 0, color: "#888" }}>
+                Test Credentials
+              </h3>
+              <button
+                type="button"
+                onClick={fillTestUser}
+                style={{
+                  background: "#334155",
+                  color: "#e2e8f0",
+                  border: "none",
+                  borderRadius: 6,
+                  padding: "6px 12px",
+                  fontSize: 12,
+                  cursor: "pointer",
+                }}
+              >
+                Auto-fill
+              </button>
+            </div>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <tbody>
+                <tr>
+                  <td
+                    style={{
+                      padding: "4px 12px 4px 0",
+                      color: "#888",
+                      fontSize: 13,
+                    }}
+                  >
+                    Username
+                  </td>
+                  <td>
+                    <code
+                      style={{
+                        color: "#e2e8f0",
+                        fontSize: 13,
+                        background: "#0a0a1a",
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                      }}
+                    >
+                      {TEST_USER.username}
+                    </code>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={{
+                      padding: "4px 12px 4px 0",
+                      color: "#888",
+                      fontSize: 13,
+                    }}
+                  >
+                    Password
+                  </td>
+                  <td>
+                    <code
+                      style={{
+                        color: "#e2e8f0",
+                        fontSize: 13,
+                        background: "#0a0a1a",
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                      }}
+                    >
+                      {TEST_USER.password}
+                    </code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           {!config.clientId && (
             <p style={{ color: "#888", fontSize: 14 }}>
