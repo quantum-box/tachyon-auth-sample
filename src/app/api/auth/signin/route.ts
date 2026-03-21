@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password, client_id: config.clientId }),
   });
 
   if (!res.ok) {
