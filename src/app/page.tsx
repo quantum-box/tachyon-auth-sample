@@ -33,7 +33,10 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const TEST_USER = { username: "test", password: "***REDACTED***" };
+  const TEST_USER = {
+    username: process.env.NEXT_PUBLIC_TEST_USERNAME || "",
+    password: process.env.NEXT_PUBLIC_TEST_PASSWORD || "",
+  };
 
   function fillTestUser() {
     setUsername(TEST_USER.username);
@@ -301,94 +304,96 @@ export default function Home() {
               {loading ? "Authenticating..." : "Sign in"}
             </button>
           </div>
-          <div
-            style={{
-              background: "#1a1a2e",
-              border: "1px solid #2d2d5a",
-              borderRadius: 8,
-              padding: 16,
-            }}
-          >
+          {TEST_USER.username && TEST_USER.password && (
             <div
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 12,
+                background: "#1a1a2e",
+                border: "1px solid #2d2d5a",
+                borderRadius: 8,
+                padding: 16,
               }}
             >
-              <h3 style={{ fontSize: 14, margin: 0, color: "#888" }}>
-                Test Credentials
-              </h3>
-              <button
-                type="button"
-                onClick={fillTestUser}
+              <div
                 style={{
-                  background: "#334155",
-                  color: "#e2e8f0",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "6px 12px",
-                  fontSize: 12,
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 12,
                 }}
               >
-                Auto-fill
-              </button>
+                <h3 style={{ fontSize: 14, margin: 0, color: "#888" }}>
+                  Test Credentials
+                </h3>
+                <button
+                  type="button"
+                  onClick={fillTestUser}
+                  style={{
+                    background: "#334155",
+                    color: "#e2e8f0",
+                    border: "none",
+                    borderRadius: 6,
+                    padding: "6px 12px",
+                    fontSize: 12,
+                    cursor: "pointer",
+                  }}
+                >
+                  Auto-fill
+                </button>
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr>
+                    <td
+                      style={{
+                        padding: "4px 12px 4px 0",
+                        color: "#888",
+                        fontSize: 13,
+                      }}
+                    >
+                      Username
+                    </td>
+                    <td>
+                      <code
+                        style={{
+                          color: "#e2e8f0",
+                          fontSize: 13,
+                          background: "#0a0a1a",
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                        }}
+                      >
+                        {TEST_USER.username}
+                      </code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={{
+                        padding: "4px 12px 4px 0",
+                        color: "#888",
+                        fontSize: 13,
+                      }}
+                    >
+                      Password
+                    </td>
+                    <td>
+                      <code
+                        style={{
+                          color: "#e2e8f0",
+                          fontSize: 13,
+                          background: "#0a0a1a",
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                        }}
+                      >
+                        {TEST_USER.password}
+                      </code>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <tbody>
-                <tr>
-                  <td
-                    style={{
-                      padding: "4px 12px 4px 0",
-                      color: "#888",
-                      fontSize: 13,
-                    }}
-                  >
-                    Username
-                  </td>
-                  <td>
-                    <code
-                      style={{
-                        color: "#e2e8f0",
-                        fontSize: 13,
-                        background: "#0a0a1a",
-                        padding: "2px 6px",
-                        borderRadius: 4,
-                      }}
-                    >
-                      {TEST_USER.username}
-                    </code>
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    style={{
-                      padding: "4px 12px 4px 0",
-                      color: "#888",
-                      fontSize: 13,
-                    }}
-                  >
-                    Password
-                  </td>
-                  <td>
-                    <code
-                      style={{
-                        color: "#e2e8f0",
-                        fontSize: 13,
-                        background: "#0a0a1a",
-                        padding: "2px 6px",
-                        borderRadius: 4,
-                      }}
-                    >
-                      {TEST_USER.password}
-                    </code>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          )}
           {!config.clientId && (
             <p style={{ color: "#888", fontSize: 14 }}>
               Set NEXT_PUBLIC_OAUTH2_CLIENT_ID in .env to enable login
