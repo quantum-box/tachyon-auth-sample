@@ -1,0 +1,21 @@
+apiVersion: apps.tachy.one/v1alpha
+kind: OAuth2Client
+metadata:
+  name: auth-sample
+  tenantId: tn_01hjryxysgey07h5jz5wagqj0m
+spec:
+  redirectUris:
+    - https://auth-sample.txcloud.app/callback
+    - https://auth-sample.txcloud.app/api/auth/callback
+    - http://localhost:3000/callback
+    - http://localhost:3000/api/auth/callback
+  allowedScopes:
+    - openid
+    - profile
+    - email
+    - operator:read
+    - operator:write
+  grantTypes:
+    - authorization_code
+    - refresh_token
+  useTachyonUserPool: true
