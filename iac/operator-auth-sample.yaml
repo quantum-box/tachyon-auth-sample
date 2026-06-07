@@ -1,0 +1,7 @@
+apiVersion: apps.tachy.one/v1alpha
+kind: Operator
+metadata:
+  name: auth-sample
+  tenantId: tn_01hjryxysgey07h5jz5wagqj0m
+spec:
+  displayName: auth-sample
