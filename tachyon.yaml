@@ -2,7 +2,7 @@ apiVersion: apps.tachy.one/v1alpha
 kind: CloudApps
 metadata:
   name: auth-sample
-  tenantId: tn_01hjjn348rn3t49zz6hvmfq67p
+  tenantId: tn_01kthtvdwrhznnf8bs2v1b5s5a
 spec:
   apps:
     - name: auth-sample
@@ -27,4 +27,4 @@ spec:
         - name: NEXT_PUBLIC_REDIRECT_URI
           value: https://auth-sample.txcloud.app/callback
         - name: NEXT_PUBLIC_OPERATOR_ID
-          value: tn_01hjjn348rn3t49zz6hvmfq67p
+          value: tn_01kthtvdwrhznnf8bs2v1b5s5a
