@@ -60,3 +60,5 @@ Browser                    This App (Next.js)           Tachyon Auth Platform
 - [Next.js](https://nextjs.org) 15 (App Router)
 - OAuth2 with PKCE (RFC 7636)
 - Tachyon Auth Platform as OAuth2/OIDC Provider
+
+<!-- build trigger: PLT-1882 CF Pages deploy verification -->
