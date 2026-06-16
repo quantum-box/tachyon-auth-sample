@@ -16,7 +16,7 @@ spec:
       deploymentTarget: cloudflare_pages
       build:
         installCommand: npm ci
-        command: npm run build
+        command: npm run pages:build
         outputDirectory: .vercel/output/static
         nodeVersion: "20"
       envVars:

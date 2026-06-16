@@ -1,0 +1,83 @@
+name: Cloud App Canary
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Git branch to deploy through Tachyon Cloud Apps"
+        required: false
+        default: "main"
+      environment:
+        description: "Tachyon Cloud Apps environment label"
+        required: false
+        default: "sandbox"
+  schedule:
+    - cron: "17 19 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-app-canary-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  cloud-app-canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      TACHYON_API_KEY: ${{ secrets.TACHYON_API_KEY }}
+      TACHYON_API_URL: ${{ vars.TACHYON_API_URL || 'https://api.n1.tachy.one' }}
+      TACHYON_TENANT_ID: ${{ vars.TACHYON_CANARY_TENANT_ID || 'tn_01hjjn348rn3t49zz6hvmfq67p' }}
+      TACHYON_CANARY_APP: ${{ vars.TACHYON_CANARY_APP || 'auth-sample' }}
+      TACHYON_CANARY_ENVIRONMENT: ${{ inputs.environment || vars.TACHYON_CANARY_ENVIRONMENT || 'sandbox' }}
+      TACHYON_CANARY_BRANCH: ${{ inputs.branch || vars.TACHYON_CANARY_BRANCH || github.ref_name }}
+      TACHYON_CANARY_TIMEOUT_SECS: ${{ vars.TACHYON_CANARY_TIMEOUT_SECS || '900' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Cloudflare Pages artifact
+        run: npm run pages:build
+
+      - name: Install Tachyon CLI
+        env:
+          TACHYON_CLI_DOWNLOAD_URL: ${{ secrets.TACHYON_CLI_DOWNLOAD_URL }}
+          TACHYON_CLI_INSTALL_COMMAND: ${{ secrets.TACHYON_CLI_INSTALL_COMMAND }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+          if command -v tachyon >/dev/null; then
+            tachyon --version
+            exit 0
+          fi
+
+          if [ -n "${TACHYON_CLI_DOWNLOAD_URL:-}" ]; then
+            curl -fsSL "$TACHYON_CLI_DOWNLOAD_URL" -o "$HOME/.local/bin/tachyon"
+            chmod 0755 "$HOME/.local/bin/tachyon"
+            "$HOME/.local/bin/tachyon" --version
+            exit 0
+          fi
+
+          if [ -n "${TACHYON_CLI_INSTALL_COMMAND:-}" ]; then
+            bash -lc "$TACHYON_CLI_INSTALL_COMMAND"
+            tachyon --version
+            exit 0
+          fi
+
+          echo "::error::Set TACHYON_CLI_DOWNLOAD_URL or TACHYON_CLI_INSTALL_COMMAND so this workflow can install tachyon." >&2
+          exit 1
+
+      - name: Run Cloud App canary
+        id: canary
+        run: scripts/cloud-app-canary.sh
