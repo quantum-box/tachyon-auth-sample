@@ -30,9 +30,9 @@ jobs:
       TACHYON_API_URL: ${{ vars.TACHYON_API_URL || 'https://api.n1.tachy.one' }}
       TACHYON_TENANT_ID: ${{ vars.TACHYON_CANARY_TENANT_ID || 'tn_01hjjn348rn3t49zz6hvmfq67p' }}
       TACHYON_CANARY_APP: ${{ vars.TACHYON_CANARY_APP || 'auth-sample' }}
-      TACHYON_CANARY_ENVIRONMENT: ${{ inputs.environment || 'sandbox' }}
-      TACHYON_CANARY_BRANCH: ${{ inputs.branch || github.ref_name }}
-      TACHYON_CANARY_TIMEOUT_SECS: "900"
+      TACHYON_CANARY_ENVIRONMENT: ${{ inputs.environment || vars.TACHYON_CANARY_ENVIRONMENT || 'sandbox' }}
+      TACHYON_CANARY_BRANCH: ${{ inputs.branch || vars.TACHYON_CANARY_BRANCH || github.ref_name }}
+      TACHYON_CANARY_TIMEOUT_SECS: ${{ vars.TACHYON_CANARY_TIMEOUT_SECS || '900' }}
 
     steps:
       - uses: actions/checkout@v4

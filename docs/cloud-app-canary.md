@@ -85,6 +85,9 @@ Required GitHub repository configuration:
 - Optional variable `TACHYON_CANARY_TENANT_ID`: defaults to
   `tn_01hjjn348rn3t49zz6hvmfq67p`.
 - Optional variable `TACHYON_CANARY_APP`: defaults to `auth-sample`.
+- Optional variable `TACHYON_CANARY_ENVIRONMENT`: defaults to `sandbox`.
+- Optional variable `TACHYON_CANARY_BRANCH`: defaults to the workflow ref.
+- Optional variable `TACHYON_CANARY_TIMEOUT_SECS`: defaults to `900`.
 
 Manual run:
 
