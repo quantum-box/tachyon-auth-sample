@@ -1,0 +1,31 @@
+apiVersion: apps.tachy.one/v1alpha
+kind: CloudApps
+metadata:
+  name: auth-sample-k8s-test
+  tenantId: tn_01hjjn348rn3t49zz6hvmfq67p
+spec:
+  apps:
+    - name: auth-sample-k8s-test
+      repository:
+        url: https://github.com/quantum-box/tachyon-auth-sample
+        owner: quantum-box
+        name: tachyon-auth-sample
+        defaultBranch: main
+      rootDirectory: ""
+      framework: next_js
+      deploymentTarget: cloudflare_pages
+      build:
+        runnerBackend: kubernetes_kata
+        installCommand: npm ci
+        command: npm run pages:build
+        outputDirectory: .vercel/output/static
+        nodeVersion: "20"
+      envVars:
+        - name: NEXT_PUBLIC_TACHYON_AUTH_URL
+          value: https://api.n1.tachy.one
+        - name: NEXT_PUBLIC_OAUTH2_CLIENT_ID
+          value: tachyon_oc_01kkvsaph1qxcp5k9fxvvrzdg2
+        - name: NEXT_PUBLIC_REDIRECT_URI
+          value: https://auth-sample-k8s-test.txcloud.app/callback
+        - name: NEXT_PUBLIC_OPERATOR_ID
+          value: tn_01kthtvdwrhznnf8bs2v1b5s5a
