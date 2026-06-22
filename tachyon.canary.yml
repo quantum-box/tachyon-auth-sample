@@ -19,6 +19,7 @@ spec:
         command: npm run pages:build
         outputDirectory: .vercel/output/static
         nodeVersion: "20"
+        runnerBackend: kubernetes_kata
       auth:
         enabled: true
         publicPaths:
