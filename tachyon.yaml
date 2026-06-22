@@ -25,7 +25,49 @@ spec:
           value: https://api.n1.tachy.one
         - name: NEXT_PUBLIC_OAUTH2_CLIENT_ID
           value: tachyon_oc_01kkvsaph1qxcp5k9fxvvrzdg2
+        - name: OAUTH2_CLIENT_SECRET
+          valueFrom:
+            secret: auth-sample/OAUTH2_CLIENT_SECRET
         - name: NEXT_PUBLIC_REDIRECT_URI
           value: https://auth-sample.txcloud.app/callback
         - name: NEXT_PUBLIC_OPERATOR_ID
           value: tn_01kthtvdwrhznnf8bs2v1b5s5a
+      hooks:
+        postDeploy:
+          - name: runtime-env-check
+            command:
+              run: |
+                set -eu
+                origin_response="$(mktemp)"
+                public_response="$(mktemp)"
+                cleanup() {
+                  rm -f "$origin_response" "$public_response"
+                }
+                trap cleanup EXIT
+
+                origin_url="${TACHYON_DEPLOYMENT_URL%/}/api/runtime-env-check"
+                public_url="${TACHYON_DEPLOYMENT_PUBLIC_URL%/}/api/runtime-env-check"
+
+                fetch_status() {
+                  curl -sS -o "$2" -w "%{http_code}" "$1" || true
+                }
+
+                origin_status="$(fetch_status "$origin_url" "$origin_response")"
+                public_status="$(fetch_status "$public_url" "$public_response")"
+
+                if [ "$origin_status" != "200" ]; then
+                  echo "runtime env check failed at Pages origin: HTTP ${origin_status:-curl_error}" >&2
+                  cat "$origin_response" >&2 || true
+                  exit 1
+                fi
+                if [ "$public_status" != "200" ]; then
+                  echo "runtime env check failed at txcloud public URL: HTTP ${public_status:-curl_error}" >&2
+                  cat "$public_response" >&2 || true
+                  exit 1
+                fi
+                if ! cmp -s "$origin_response" "$public_response"; then
+                  echo "runtime env check responses differ between Pages origin and txcloud public URL" >&2
+                  diff -u "$origin_response" "$public_response" >&2 || true
+                  exit 1
+                fi
+            timeoutSeconds: 120

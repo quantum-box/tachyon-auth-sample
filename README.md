@@ -32,6 +32,15 @@ A sample Next.js application demonstrating OAuth2/OIDC integration with [Tachyon
    - Push to GitHub
    - Create a Cloud App on Tachyon Compute pointing to this repo
    - Set environment variables in the app configuration
+   - Store `OAUTH2_CLIENT_SECRET` as an app secret before deploy
+
+## Runtime Credential Check
+
+`GET /api/runtime-env-check` verifies that `OAUTH2_CLIENT_SECRET` is present in the deployed Cloudflare Pages runtime without exposing the secret value.
+
+The Tachyon manifest runs this endpoint as a `postDeploy` smoke check against both the concrete Pages deployment URL and the txcloud public URL. A deployment fails if the runtime credential is missing or if the public route still serves a different deployment response.
+
+For local Pages artifact verification, run `npm run pages:build`; Tachyon's Cloudflare Pages build path also runs `next-on-pages` before Direct Upload.
 
 ## OAuth2 Flow
 
