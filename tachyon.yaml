@@ -29,3 +29,6 @@ spec:
           value: https://auth-sample.txcloud.app/callback
         - name: NEXT_PUBLIC_OPERATOR_ID
           value: tn_01kthtvdwrhznnf8bs2v1b5s5a
+        - name: OAUTH2_CLIENT_SECRET
+          valueFrom:
+            secret: auth-sample/OAUTH2_CLIENT_SECRET
