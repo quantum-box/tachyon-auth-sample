@@ -62,3 +62,5 @@ Browser                    This App (Next.js)           Tachyon Auth Platform
 - Tachyon Auth Platform as OAuth2/OIDC Provider
 
 <!-- build trigger: PLT-1882 CF Pages deploy verification -->
+
+<!-- verify PLT-2485 reopen-dedup route repair 20260709T063842Z -->
