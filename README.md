@@ -67,3 +67,4 @@ Browser                    This App (Next.js)           Tachyon Auth Platform
 # retrigger 2
 # retrigger 3
 # retrigger 4: after credential fix + api rollout
+# retrigger 5: runtime binding attached
