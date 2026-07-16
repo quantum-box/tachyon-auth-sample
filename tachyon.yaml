@@ -19,7 +19,13 @@ spec:
         command: npm run pages:build
         outputDirectory: .vercel/output/static
         nodeVersion: "20"
-        runnerBackend: kubernetes_kata
+        # D1 migrations only run on the CodeBuild backend today;
+        # kubernetes_kata (JobRun/CLI) builds skip them.
+        runnerBackend: codebuild
+      d1Databases:
+        - binding: DB
+          databaseName: auth-sample-db
+          migrationsDir: migrations
       envVars:
         - name: NEXT_PUBLIC_TACHYON_AUTH_URL
           value: https://api.n1.tachy.one

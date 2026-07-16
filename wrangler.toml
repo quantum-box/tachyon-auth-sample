@@ -7,3 +7,8 @@ NEXT_PUBLIC_TACHYON_AUTH_URL = "https://api.n1.tachy.one"
 NEXT_PUBLIC_OAUTH2_CLIENT_ID = "tachyon_oc_01kkvsaph1qxcp5k9fxvvrzdg2"
 NEXT_PUBLIC_REDIRECT_URI = "https://auth-sample.txcloud.app/callback"
 NEXT_PUBLIC_OPERATOR_ID = "tn_01hjjn348rn3t49zz6hvmfq67p"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "auth-sample-db"
+database_id = "TODO_DB"

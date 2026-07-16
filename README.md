@@ -62,3 +62,9 @@ Browser                    This App (Next.js)           Tachyon Auth Platform
 - Tachyon Auth Platform as OAuth2/OIDC Provider
 
 <!-- build trigger: PLT-1882 CF Pages deploy verification -->
+
+# Retrigger marker: D1 token permission fixed (2026-07-16)
+# retrigger 2
+# retrigger 3
+# retrigger 4: after credential fix + api rollout
+# retrigger 5: runtime binding attached
