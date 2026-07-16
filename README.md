@@ -64,3 +64,4 @@ Browser                    This App (Next.js)           Tachyon Auth Platform
 <!-- build trigger: PLT-1882 CF Pages deploy verification -->
 
 # Retrigger marker: D1 token permission fixed (2026-07-16)
+# retrigger 2
