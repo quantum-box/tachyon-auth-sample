@@ -1,3 +1,4 @@
+# Workspace Runtime builder canary campaign: 2026-10-10. Keep this fixture PR unmerged.
 apiVersion: apps.tachy.one/v1alpha
 kind: CloudApps
 metadata:
