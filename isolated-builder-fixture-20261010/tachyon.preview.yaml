@@ -1,3 +1,4 @@
+# Isolated Workspace Builder canary execution branch. Keep this PR unmerged.
 apiVersion: apps.tachy.one/v1alpha
 kind: CloudApps
 metadata:
