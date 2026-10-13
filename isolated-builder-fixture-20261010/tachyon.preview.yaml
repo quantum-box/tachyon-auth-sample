@@ -1,0 +1,26 @@
+apiVersion: apps.tachy.one/v1alpha
+kind: CloudApps
+metadata:
+  name: workspace-builder-canary-20261010
+  tenantId: tn_01hjjn348rn3t49zz6hvmfq67p
+spec:
+  apps:
+    - name: workspace-builder-canary-20261010
+      repository:
+        url: https://github.com/quantum-box/tachyon-auth-sample
+        owner: quantum-box
+        name: tachyon-auth-sample
+        defaultBranch: codex/workspace-builder-fixture-seed-20261010
+      rootDirectory: isolated-builder-fixture-20261010
+      framework: static
+      deploymentTarget: cloudflare_pages
+      build:
+        runnerBackend: kubernetes_kata
+        installCommand: npm ci --ignore-scripts --no-audit --no-fund
+        command: npm run build
+        outputDirectory: dist
+        nodeVersion: "20"
+      d1Databases:
+        - binding: DB
+          databaseName: workspace-builder-canary-20261010-db
+          migrationsDir: migrations
